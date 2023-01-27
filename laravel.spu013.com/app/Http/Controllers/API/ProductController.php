@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use Illuminate\Http\Request;
+
 /**
  * @OA\Info(
  *      version="1.0.0",
@@ -20,6 +21,7 @@ use Illuminate\Http\Request;
  * )
  *
  */
+
 class ProductController extends Controller
 {
     /**
@@ -47,30 +49,15 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $input=$request->all(); //отримуємо усі дані шз запита на сервер
-        $name=$input["name"] ?? "";
+        $input = $request->all(); //отримуємо усі дані із запита на сервер
+        $name = $input["name"] ?? "";
         $prodcuts = Product::where("name", "LIKE", "%$name%")->paginate(2);
         return response()->json($prodcuts,  200,
             ['Content-Type' => 'application/json;charset=UTF-8', 'Charset' => 'utf-8'],
             JSON_UNESCAPED_UNICODE);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     /**
      * @OA\Post(
      ** path="/api/products",
@@ -117,28 +104,6 @@ class ProductController extends Controller
             "data"=> $product
         ]);
     }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-     public function edit(Product $product)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Product  $product
-     * @return \Illuminate\Http\Response
-     */
-
-
-    //==================
     /**
      * @OA\Get(
      *     tags={"Product"},

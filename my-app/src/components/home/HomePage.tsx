@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import http from "../../http_common";
 import Pagination from "../common/Pagination";
 import { GetProductAction, IProductItem, IProductResponse, IProductState, ProductActionTypes } from "./types";
@@ -9,8 +9,11 @@ const HomePage = () => {
   const { list, total, count_page, current_page } = useSelector((state: any) => state.product as IProductState);
   const dispatch = useDispatch();
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   useEffect(() => {
-    http.get<IProductResponse>("/api/products").then((resp) => {
+    const page = searchParams.get("page")?? 1;
+    http.get<IProductResponse>("/api/products?page="+page).then((resp) => {
       console.log("List product server", resp);
       const {data} = resp;
 
@@ -28,7 +31,7 @@ const HomePage = () => {
 
       dispatch(action);
     });
-  }, []);
+  }, [searchParams]);
 
   const data = list.map((product) => (
     <tr key={product.id}>
@@ -38,14 +41,17 @@ const HomePage = () => {
     </tr>
   ));
 
-  const handleClickPage = (page:number) => {
+  const handleClickPage = (page: number) => {
+    setSearchParams("page="+page);
     console.log("Click, number", page);
   }
 
   return (
     <>
       <h1 className="text-center">Головна сторінка</h1>
-      <h4>Всього записів <strong>{total}</strong></h4>
+      <h4>
+        Всього записів <strong>{total}</strong>
+      </h4>
       <table className="table">
         <thead>
           <tr>
@@ -56,12 +62,11 @@ const HomePage = () => {
         </thead>
         <tbody>{data}</tbody>
       </table>
-      
 
-      <Pagination 
-      count_page={count_page} 
-      current_page={current_page} 
-      onClick={handClickPage}
+      <Pagination
+        count_page={count_page}
+        current_page={current_page}
+        onHandleClick={handleClickPage}
       />
     </>
   );
